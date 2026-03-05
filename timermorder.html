@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Birthday Countdown with Video</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <style>
+        html, body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Georgia, serif;
+            overflow: hidden;
+        }
+
+        body{
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
+            background-size: cover;
+            transition: 1s ease-in-out;
+        }
+
+        /* Countdown overlay */
+        #countdownOverlay{
+            position: fixed;
+            top:0;
+            left:0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 10;
+        }
+
+        #timer{
+            font-size: 80px;
+            margin: 0;
+        }
+
+        #message{
+            font-size: 40px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* Video background */
+        #bgVideo{
+            position: fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            object-fit: cover;
+            display: none;
+            z-index: 0;
+        }
+
+        /* Birthday text overlay */
+        .birthday{
+            display: none;
+            position: fixed;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            font-size: 70px;
+            color: white;
+            text-shadow: 2px 2px 15px black;
+            z-index: 5;
+        }
+
+        /* Flower animation */
+        .flower{
+            position: fixed;
+            top: -10px;
+            font-size: 30px;
+            animation: fall linear infinite;
+            z-index: 5;
+        }
+
+        @keyframes fall{
+            0%{ transform: translateY(0) rotate(0deg); opacity:1; }
+            100%{ transform: translateY(100vh) rotate(360deg); opacity:0; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Video background -->
+    <video autoplay muted loop id="bgVideo">
+        <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <!-- Countdown overlay -->
+    <div id="countdownOverlay">
+        <h1 id="timer">00:10</h1>
+        <div id="message">Few Minutes Left...</div>
+    </div>
+
+    <!-- Birthday text -->
+    <div class="birthday">🎉 HAPPY BIRTHDAY 🎉</div>
+
+    <script>
+        $(document).ready(function(){
+
+            let timerLeft = 10;
+
+            let interval = setInterval(function(){
+
+                let min = Math.floor(timerLeft / 60);
+                let sec = timerLeft % 60;
+
+                min = min < 10 ? "0" + min : min;
+                sec = sec < 10 ? "0" + sec : sec;
+
+                $("#timer").text(min + ":" + sec);
+
+                // Show message in last 5 sec
+                if(timerLeft <= 5 && timerLeft > 0){
+                    $("#message").fadeIn();
+                }
+
+                if(timerLeft <= 0){
+                    clearInterval(interval);
+
+                    // Hide countdown overlay
+                    $("#countdownOverlay").fadeOut(800);
+
+                    // Show video
+                    $("#bgVideo").fadeIn(1000);
+
+                    // Show birthday text
+                    $(".birthday").fadeIn(1500);
+
+                    // Start flower animation
+                    startFlowers();
+                }
+
+                timerLeft--;
+
+            }, 1000);
+
+            // 🌸 Flower animation function
+            function startFlowers(){
+                setInterval(function(){
+                    let flower = $("<div class='flower'>🌸</div>");
+                    flower.css({
+                        left: Math.random()*100 + "vw",
+                        animationDuration: (3 + Math.random()*5) + "s",
+                        fontSize: (20 + Math.random()*30) + "px"
+                    });
+
+                    $("body").append(flower);
+
+                    setTimeout(function(){
+                        flower.remove();
+                    }, 8000);
+
+                }, 300);
+            }
+
+        });
+    </script>
+
+</body>
+</html>
