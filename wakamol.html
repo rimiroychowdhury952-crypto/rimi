@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Whack-a-Mole</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#e9f5ff;
+}
+
+#game{
+width:300px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(3,100px);
+grid-gap:10px;
+}
+
+.hole{
+width:100px;
+height:100px;
+background:#444;
+border-radius:50%;
+position:relative;
+cursor:pointer;
+}
+
+.mole{
+width:70px;
+height:70px;
+background:brown;
+border-radius:50%;
+position:absolute;
+top:15px;
+left:15px;
+display:none;
+}
+
+#score{
+font-size:24px;
+margin:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Whack-a-Mole 🎮</h1>
+<div id="score">Score: 0</div>
+
+<div id="game">
+<div class="hole"><div class="mole"></div></div>
+<div class="hole"><div class="mole"></div></div>
+<div class="hole"><div class="mole"></div></div>
+<div class="hole"><div class="mole"></div></div>
+<div class="hole"><div class="mole"></div></div>
+<div class="hole"><div class="mole"></div></div>
+</div>
+
+<script>
+
+let score=0;
+
+function randomMole(){
+$(".mole").hide();
+let index=Math.floor(Math.random()*6);
+$(".mole").eq(index).show();
+}
+
+setInterval(randomMole,1000);
+
+$(".mole").click(function(){
+score++;
+$("#score").text("Score: "+score);
+$(this).hide();
+});
+
+</script>
+
+</body>
+</html>
