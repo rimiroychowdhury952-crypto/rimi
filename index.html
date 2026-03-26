@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;500&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
 <title>For You ✨</title>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
@@ -18,9 +15,9 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
+    background:#000;
 }
 
-/* BACKGROUND */
 .bg-image{
     position:fixed;
     width:100%;
@@ -32,7 +29,6 @@ body{
     z-index:0;
 }
 
-/* FOG */
 .fog{
     position:fixed;
     width:200%;
@@ -45,7 +41,6 @@ body{
     to{transform:translate(-25%,-25%);}
 }
 
-/* LEAVES */
 .leaf{
     position:fixed;
     top:-10px;
@@ -57,7 +52,6 @@ body{
     100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
 }
 
-/* FIREFLIES */
 .firefly{
     position:fixed;
     width:6px;
@@ -72,7 +66,6 @@ body{
     50%{opacity:1; transform:translate(50px,-80px);}
 }
 
-/* TIMER (UNCHANGED) */
 .timer-container{
     position:relative;
     z-index:10;
@@ -97,18 +90,19 @@ h1{
     gap:10px;
     justify-content:center;
 }
+
 .time-unit{
     background:rgba(255,255,255,0.7);
     padding:12px;
     border-radius:20px;
     min-width:70px;
 }
+
 .time-number{
     font-size:26px;
     font-weight:bold;
 }
 
-/* LETTER */
 .letter-box{
     display:none;
     position:fixed;
@@ -152,6 +146,7 @@ h1{
 .envelope.open .flap{
     transform:rotateX(180deg);
 }
+
 .envelope.open .letter{
     transform:translateY(-60px);
 }
@@ -164,28 +159,42 @@ h1{
     left:0;
     width:100%;
     height:100vh;
-
-    overflow-y:auto !important;
-    -webkit-overflow-scrolling: touch !important;
-
+    overflow-y:auto;
     color:#fff;
-    font-size:22px;
-    line-height:1.6;
+    font-size:24px;
+    line-height:1.8;
     text-align:center;
-    font-family:'Great Vibes', cursive;
-
-    text-shadow:0 0 15px rgba(255,255,255,0.4);
+    font-family:'Cormorant Garamond', serif;
+    letter-spacing:0.6px;
+    text-shadow:0 0 10px rgba(255,255,255,0.5),0 0 20px rgba(255,200,150,0.3);
     white-space:pre-line;
-
     padding:80px 20px;
+    transition: transform 2s ease-in-out;
 }
 
-/* SCROLL ENABLE AFTER OPEN */
-body.show-message{
-    overflow:auto;
+/* Floating effect for typing */
+.float{
+    animation: floatUpDown 6s ease-in-out infinite alternate;
 }
 
-/* SCROLLBAR */
+/* Gentle floating after typing ends */
+.slowFloat{
+    animation: slowFloatUpDown 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatUpDown{
+    0%{transform: translateY(0);}
+    50%{transform: translateY(-20px);}
+    100%{transform: translateY(0);}
+}
+
+@keyframes slowFloatUpDown{
+    0%{transform: translateY(0);}
+    50%{transform: translateY(-10px);}
+    100%{transform: translateY(0);}
+}
+
+/* Scrollbar */
 .emotional-message::-webkit-scrollbar{
     width:6px;
 }
@@ -193,7 +202,6 @@ body.show-message{
     background:#f5e6d3;
     border-radius:10px;
 }
-
 </style>
 </head>
 
@@ -205,7 +213,6 @@ body.show-message{
 <!-- TIMER -->
 <div class="timer-container" id="timerContainer">
     <h1>Something special is waiting for you… ✨</h1>
-
     <div class="timer-row">
         <div class="time-unit"><div class="time-number" id="days">00</div>Days</div>
         <div class="time-unit"><div class="time-number" id="hours">00</div>Hrs</div>
@@ -224,12 +231,11 @@ body.show-message{
 </div>
 
 <!-- MESSAGE -->
-<div class="emotional-message" id="message"></div>
+<div class="emotional-message float" id="message"></div>
 
 <script>
-
 function startTypingWithAutoScroll(){
-    let text = `Happy birthday my baby, sona bachi 💛
+let text = `Happy Birthday NEHU BABY 💖
 Hamesha smile karti rehna 😁
 
 Life mein ups and downs aate rehte hain,
@@ -247,49 +253,46 @@ Sabse important baat —
 kabhi khud se zyada kisi aur ko importance mat dena.
 Pehle tu… phir baaki sab.
 
+Aur ek baat aur,
+agar kabhi meri koi baat tujhe hurt kare,
+ya main kahin galat ho jaun,
+toh bilkul hesitate mat karna…
+mujhe ache se samjha dena.
+
+Kehne ko toh bohot kuch hai…
+par sab ek hi din mein nahi bolunga.
+Abhi bhi bohot safar tai karna hai… ✨
+
 Once again…
-HAPPY BIRTHDAY MY BABY 💛
-I CARED ABOUT YOU SO MUCH ❤️✨`;
+HAPPY BIRTHDAY MY BABY 🤍
+I CARE ABOUT YOU SO MUCH ❤️✨`;
 
-    let el = document.getElementById("message");
-    el.innerHTML = "";
+let el = document.getElementById("message");
+el.innerHTML = "";
+let i = 0;
 
-    let i=0;
-    let scrollInterval;
-    
-    function type(){
-        if(i < text.length){
-            el.innerHTML += text.charAt(i);
-            i++;
-            
-            // AUTO SCROLL WHILE TYPING
-            if(el.scrollHeight > window.innerHeight){
-                el.scrollTop += 2;
-            }
-            
-            setTimeout(type, 50);
-        } else {
-            // AUTO SCROLL AFTER TYPING - SLOWER
-            scrollInterval = setInterval(()=>{
-                if(el.scrollTop < el.scrollHeight - window.innerHeight - 50){
-                    el.scrollTop += 1.5;
-                } else {
-                    clearInterval(scrollInterval);
-                    // PAUSE FOR 2 SECONDS THEN ENABLE MANUAL SCROLL
-                    setTimeout(()=>{
-                        el.style.overflowY = 'auto';
-                        el.style.height = '100vh';
-                    }, 2000);
-                }
-            }, 80);
+function type(){
+    if(i < text.length){
+        el.innerHTML += text.charAt(i);
+        i++;
+
+        if(el.scrollHeight > el.clientHeight){
+            el.scrollTop = el.scrollHeight;
         }
+
+        setTimeout(type, 70); // slower typing
+    } else {
+        // After typing, change floating to slowFloat
+        el.classList.remove("float");
+        el.classList.add("slowFloat");
     }
-    type();
+}
+type();
 }
 
 $(document).ready(function(){
 
-/* LEAVES */
+// Leaves
 setInterval(()=>{
     let leaf=$('<div class="leaf">🍂</div>');
     leaf.css({left:Math.random()*100+"%",animationDuration:(Math.random()*5+5)+"s"});
@@ -297,35 +300,43 @@ setInterval(()=>{
     setTimeout(()=>leaf.remove(),8000);
 },800);
 
-/* FIREFLIES */
+// Fireflies
 for(let i=0;i<25;i++){
     let f=$('<div class="firefly"></div>');
     f.css({left:Math.random()*100+"%",top:Math.random()*100+"%"});
     $("body").append(f);
 }
 
-/* TIMER SAME (UNCHANGED) */
-let t=10;
-let c=setInterval(()=>{
-    $("#seconds").text(t<10?"0"+t:t);
+// Timer
+let totalSeconds = 10;
+let c = setInterval(()=>{
+    let days = Math.floor(totalSeconds / (24 * 3600));
+    let hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = totalSeconds % 60;
 
-    if(t<=0){
+    $("#days").text(days < 10 ? "0"+days : days);
+    $("#hours").text(hours < 10 ? "0"+hours : hours);
+    $("#minutes").text(minutes < 10 ? "0"+minutes : minutes);
+    $("#seconds").text(seconds < 10 ? "0"+seconds : seconds);
+
+    if(totalSeconds <= 0){
         clearInterval(c);
         $("#timerContainer").fadeOut(800,()=>{
             $("#letterBox").fadeIn(1000);
         });
         return;
     }
-    t--;
+
+    totalSeconds--;
 },1000);
 
-/* OPEN LETTER */
+// Open envelope
 $("#envelope").click(function(){
     $(this).addClass("open");
 
     setTimeout(()=>{
         $("#letterBox").fadeOut(800,()=>{
-            $("body").addClass("show-message");
             $("#message").fadeIn(300,()=>{
                 startTypingWithAutoScroll();
             });
