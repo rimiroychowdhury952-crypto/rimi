@@ -1,83 +1,339 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Whack-a-Mole</title>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+<title>For You ✨</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-font-family:Arial;
-text-align:center;
-background:#e9f5ff;
+    font-family:'Poppins', sans-serif;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-#game{
-width:300px;
-margin:auto;
-display:grid;
-grid-template-columns:repeat(3,100px);
-grid-gap:10px;
+/* BACKGROUND */
+.bg-image{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+        linear-gradient(rgba(20,15,15,0.5), rgba(20,15,15,0.7)),
+        url('img/fog.jpg') center/cover no-repeat;
+    filter: blur(2px);
+    z-index:0;
 }
 
-.hole{
-width:100px;
-height:100px;
-background:#444;
-border-radius:50%;
-position:relative;
-cursor:pointer;
+/* FOG */
+.fog{
+    position:fixed;
+    width:200%;
+    height:200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 60%);
+    animation:fogMove 40s linear infinite;
+    z-index:1;
+}
+@keyframes fogMove{
+    to{transform:translate(-25%,-25%);}
 }
 
-.mole{
-width:70px;
-height:70px;
-background:brown;
-border-radius:50%;
-position:absolute;
-top:15px;
-left:15px;
-display:none;
+/* LEAVES */
+.leaf{
+    position:fixed;
+    top:-10px;
+    font-size:18px;
+    animation:fall linear forwards;
+    z-index:4;
+}
+@keyframes fall{
+    100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
 }
 
-#score{
-font-size:24px;
-margin:20px;
+/* FIREFLIES */
+.firefly{
+    position:fixed;
+    width:6px;
+    height:6px;
+    background:#ffd580;
+    border-radius:50%;
+    box-shadow:0 0 10px #ffd580;
+    animation:fly 6s infinite ease-in-out;
+    z-index:3;
 }
+@keyframes fly{
+    50%{opacity:1; transform:translate(50px,-80px);}
+}
+
+/* TIMER (UNCHANGED) */
+.timer-container{
+    position:relative;
+    z-index:10;
+    background: rgba(30,20,20,0.6);
+    padding:30px 50px;
+    border-radius:25px;
+    backdrop-filter: blur(18px);
+    box-shadow:0 0 25px rgba(255,200,150,0.25),0 20px 50px rgba(0,0,0,0.5);
+    border:1px solid rgba(255,255,255,0.15);
+    text-align:center;
+}
+
+h1{
+    font-size:30px;
+    color:#f5e6d3;
+    margin-bottom:15px;
+    font-family:'Great Vibes', cursive;
+}
+
+.timer-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+}
+.time-unit{
+    background:rgba(255,255,255,0.7);
+    padding:12px;
+    border-radius:20px;
+    min-width:70px;
+}
+.time-number{
+    font-size:26px;
+    font-weight:bold;
+}
+
+/* LETTER */
+.letter-box{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:10;
+    text-align:center;
+}
+
+.envelope{
+    position:relative;
+    width:120px;
+    height:80px;
+    background:#c9a27c;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.flap{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:#b88c65;
+    clip-path: polygon(0 0, 100% 0, 50% 50%);
+    transform-origin:top;
+    transition:0.6s;
+}
+
+.letter{
+    position:absolute;
+    width:90%;
+    height:90%;
+    background:white;
+    top:5%;
+    left:5%;
+    border-radius:4px;
+    transition:0.6s;
+}
+
+.envelope.open .flap{
+    transform:rotateX(180deg);
+}
+.envelope.open .letter{
+    transform:translateY(-60px);
+}
+
+/* MESSAGE */
+.emotional-message{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling: touch !important;
+
+    color:#fff;
+    font-size:22px;
+    line-height:1.6;
+    text-align:center;
+    font-family:'Great Vibes', cursive;
+
+    text-shadow:0 0 15px rgba(255,255,255,0.4);
+    white-space:pre-line;
+
+    padding:80px 20px;
+}
+
+/* SCROLL ENABLE AFTER OPEN */
+body.show-message{
+    overflow:auto;
+}
+
+/* SCROLLBAR */
+.emotional-message::-webkit-scrollbar{
+    width:6px;
+}
+.emotional-message::-webkit-scrollbar-thumb{
+    background:#f5e6d3;
+    border-radius:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Whack-a-Mole 🎮</h1>
-<div id="score">Score: 0</div>
+<div class="bg-image"></div>
+<div class="fog"></div>
 
-<div id="game">
-<div class="hole"><div class="mole"></div></div>
-<div class="hole"><div class="mole"></div></div>
-<div class="hole"><div class="mole"></div></div>
-<div class="hole"><div class="mole"></div></div>
-<div class="hole"><div class="mole"></div></div>
-<div class="hole"><div class="mole"></div></div>
+<!-- TIMER -->
+<div class="timer-container" id="timerContainer">
+    <h1>Something special is waiting for you… ✨</h1>
+
+    <div class="timer-row">
+        <div class="time-unit"><div class="time-number" id="days">00</div>Days</div>
+        <div class="time-unit"><div class="time-number" id="hours">00</div>Hrs</div>
+        <div class="time-unit"><div class="time-number" id="minutes">00</div>Min</div>
+        <div class="time-unit"><div class="time-number" id="seconds">10</div>Sec</div>
+    </div>
 </div>
+
+<!-- LETTER -->
+<div class="letter-box" id="letterBox">
+    <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="letter"></div>
+    </div>
+    <p style="color:white;margin-top:10px;">Tap to open</p>
+</div>
+
+<!-- MESSAGE -->
+<div class="emotional-message" id="message"></div>
 
 <script>
 
-let score=0;
+function startTypingWithAutoScroll(){
+    let text = `Happy birthday my baby, sona bachi 💛
+Hamesha smile karti rehna 😁
 
-function randomMole(){
-$(".mole").hide();
-let index=Math.floor(Math.random()*6);
-$(".mole").eq(index).show();
+Life mein ups and downs aate rehte hain,
+un sab cheezon ke baare mein zyada soch ke koi fayda nahi hota.
+
+Ek baat hamesha yaad rakhna —
+tu perfect hai, aur hamesha rahegi.
+
+Aur tera yeh dost hamesha tere paas rahega.
+Life mein kabhi bhi koi problem aaye,
+kabhi hesitate mat karna…
+bas ek call karna — I am always here for you.
+
+Sabse important baat —
+kabhi khud se zyada kisi aur ko importance mat dena.
+Pehle tu… phir baaki sab.
+
+Once again…
+HAPPY BIRTHDAY MY BABY 💛
+I CARED ABOUT YOU SO MUCH ❤️✨`;
+
+    let el = document.getElementById("message");
+    el.innerHTML = "";
+
+    let i=0;
+    let scrollInterval;
+    
+    function type(){
+        if(i < text.length){
+            el.innerHTML += text.charAt(i);
+            i++;
+            
+            // AUTO SCROLL WHILE TYPING
+            if(el.scrollHeight > window.innerHeight){
+                el.scrollTop += 2;
+            }
+            
+            setTimeout(type, 50);
+        } else {
+            // AUTO SCROLL AFTER TYPING - SLOWER
+            scrollInterval = setInterval(()=>{
+                if(el.scrollTop < el.scrollHeight - window.innerHeight - 50){
+                    el.scrollTop += 1.5;
+                } else {
+                    clearInterval(scrollInterval);
+                    // PAUSE FOR 2 SECONDS THEN ENABLE MANUAL SCROLL
+                    setTimeout(()=>{
+                        el.style.overflowY = 'auto';
+                        el.style.height = '100vh';
+                    }, 2000);
+                }
+            }, 80);
+        }
+    }
+    type();
 }
 
-setInterval(randomMole,1000);
+$(document).ready(function(){
 
-$(".mole").click(function(){
-score++;
-$("#score").text("Score: "+score);
-$(this).hide();
+/* LEAVES */
+setInterval(()=>{
+    let leaf=$('<div class="leaf">🍂</div>');
+    leaf.css({left:Math.random()*100+"%",animationDuration:(Math.random()*5+5)+"s"});
+    $("body").append(leaf);
+    setTimeout(()=>leaf.remove(),8000);
+},800);
+
+/* FIREFLIES */
+for(let i=0;i<25;i++){
+    let f=$('<div class="firefly"></div>');
+    f.css({left:Math.random()*100+"%",top:Math.random()*100+"%"});
+    $("body").append(f);
+}
+
+/* TIMER SAME (UNCHANGED) */
+let t=10;
+let c=setInterval(()=>{
+    $("#seconds").text(t<10?"0"+t:t);
+
+    if(t<=0){
+        clearInterval(c);
+        $("#timerContainer").fadeOut(800,()=>{
+            $("#letterBox").fadeIn(1000);
+        });
+        return;
+    }
+    t--;
+},1000);
+
+/* OPEN LETTER */
+$("#envelope").click(function(){
+    $(this).addClass("open");
+
+    setTimeout(()=>{
+        $("#letterBox").fadeOut(800,()=>{
+            $("body").addClass("show-message");
+            $("#message").fadeIn(300,()=>{
+                startTypingWithAutoScroll();
+            });
+        });
+    },700);
 });
 
+});
 </script>
 
 </body>
