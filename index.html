@@ -6,6 +6,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
+/* SAME CSS */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
     font-family:'Poppins', sans-serif;
@@ -39,7 +40,7 @@ body{
     animation:fogMove 40s linear infinite;
     z-index:1;
 }
-@keyframes fogMove{to{transform:translate(-25%,-25%);}}
+@keyframes fogMove{to{transform:translate(-25%,-25%);} }
 
 .star{
     position:fixed;
@@ -51,7 +52,7 @@ body{
     animation: twinkle 3s infinite ease-in-out;
     z-index:2;
 }
-@keyframes twinkle{50%{opacity:1; transform:scale(1.5);}}
+@keyframes twinkle{50%{opacity:1; transform:scale(1.5);} }
 
 .leaf{
     position:fixed;
@@ -60,7 +61,7 @@ body{
     animation:fall linear forwards;
     z-index:4;
 }
-@keyframes fall{100%{transform:translateY(110vh) rotate(360deg);opacity:0;}}
+@keyframes fall{100%{transform:translateY(110vh) rotate(360deg);opacity:0;} }
 
 .firefly{
     position:fixed;
@@ -72,7 +73,7 @@ body{
     animation:fly 6s infinite ease-in-out;
     z-index:3;
 }
-@keyframes fly{50%{opacity:1; transform:translate(50px,-80px);}}
+@keyframes fly{50%{opacity:1; transform:translate(50px,-80px);} }
 
 .timer-container{
     position:relative;
@@ -131,7 +132,6 @@ h1{
     transition: transform 0.3s ease;
 }
 .envelope:hover{transform: scale(1.05);}
-
 .flap{
     position:absolute;
     width:100%;
@@ -141,7 +141,6 @@ h1{
     transform-origin:top;
     transition:0.6s;
 }
-
 .letter{
     position:absolute;
     width:90%;
@@ -152,7 +151,6 @@ h1{
     border-radius:4px;
     transition:0.6s;
 }
-
 .envelope.open .flap{transform:rotateX(180deg);}
 .envelope.open .letter{transform:translateY(-60px);}
 
@@ -179,14 +177,12 @@ h1{
 
 .float{animation: floatUpDown 6s ease-in-out infinite alternate;}
 .slowFloat{animation: slowFloatUpDown 8s ease-in-out infinite alternate;}
-
 @keyframes floatUpDown{50%{transform: translateY(-20px);} }
 @keyframes slowFloatUpDown{50%{transform: translateY(-10px);} }
 </style>
 </head>
 
 <body>
-
 <div class="bg-image"></div>
 <div class="fog"></div>
 
@@ -196,7 +192,7 @@ h1{
         <div class="time-unit"><div class="time-number" id="days">00</div>Days</div>
         <div class="time-unit"><div class="time-number" id="hours">00</div>Hrs</div>
         <div class="time-unit"><div class="time-number" id="minutes">00</div>Min</div>
-        <div class="time-unit"><div class="time-number" id="seconds">10</div>Sec</div>
+        <div class="time-unit"><div class="time-number" id="seconds">00</div>Sec</div>
     </div>
 </div>
 
@@ -211,6 +207,7 @@ h1{
 <div class="emotional-message float" id="message"></div>
 
 <script>
+// ⭐ TEXT
 function startTypingWithAutoScroll(){
 let text = `Happy Birthday NEHU BABY 💖
 Hamesha smile karti rehna 😁
@@ -264,16 +261,14 @@ type();
 
 $(document).ready(function(){
 
+// 🌟 STARS
 for(let i=0;i<40;i++){
     let star=$('<div class="star"></div>');
-    star.css({
-        left:Math.random()*100+"%",
-        top:Math.random()*100+"%",
-        animationDuration:(Math.random()*3+2)+"s"
-    });
+    star.css({left:Math.random()*100+"%",top:Math.random()*100+"%",animationDuration:(Math.random()*3+2)+"s"});
     $("body").append(star);
 }
 
+// 🍂 LEAVES
 setInterval(()=>{
     let leaf=$('<div class="leaf">🍂</div>');
     leaf.css({left:Math.random()*100+"%",animationDuration:(Math.random()*5+5)+"s"});
@@ -281,35 +276,60 @@ setInterval(()=>{
     setTimeout(()=>leaf.remove(),8000);
 },800);
 
+// 🟡 FIREFLIES
 for(let i=0;i<25;i++){
     let f=$('<div class="firefly"></div>');
     f.css({left:Math.random()*100+"%",top:Math.random()*100+"%"}); 
     $("body").append(f);
 }
 
-let totalSeconds = 10;
-let c = setInterval(()=>{
-    let days = Math.floor(totalSeconds / (24 * 3600));
-    let hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds = totalSeconds % 60;
+// ⏳ REAL-TIME TIMER
+const deadline = new Date("April 13, 2026 00:00:00").getTime();
+async function getCurrentTime() {
+    try{
+        const res = await fetch("https://worldtimeapi.org/api/timezone/Asia/Kolkata");
+        const data = await res.json();
+        return new Date(data.datetime).getTime();
+    } catch(e){
+        return new Date().getTime(); // fallback device time
+    }
+}
 
-    $("#days").text(days < 10 ? "0"+days : days);
-    $("#hours").text(hours < 10 ? "0"+hours : hours);
-    $("#minutes").text(minutes < 10 ? "0"+minutes : minutes);
-    $("#seconds").text(seconds < 10 ? "0"+seconds : seconds);
+async function startRealTimer(){
+    let now = await getCurrentTime();
 
-    if(totalSeconds <= 0){
-        clearInterval(c);
-        $("#timerContainer").fadeOut(800,()=>{
-            $("#letterBox").fadeIn(1000);
-        });
+    if(now >= deadline){
+        $("#timerContainer").hide();
+        $("#letterBox").show();
         return;
     }
 
-    totalSeconds--;
-},1000);
+    let interval = setInterval(()=>{
+        now += 1000;
+        let distance = deadline - now;
 
+        if(distance <= 0){
+            $("#days,#hours,#minutes,#seconds").text("00");
+            clearInterval(interval);
+            setTimeout(()=>$("#timerContainer").fadeOut(800,()=>$("#letterBox").fadeIn(1000)),1000);
+            return;
+        }
+
+        let days = Math.floor(distance / (1000*60*60*24));
+        let hours = Math.floor((distance / (1000*60*60))%24);
+        let minutes = Math.floor((distance / (1000*60))%60);
+        let seconds = Math.floor((distance/1000)%60);
+
+        $("#days").text(String(days).padStart(2,'0'));
+        $("#hours").text(String(hours).padStart(2,'0'));
+        $("#minutes").text(String(minutes).padStart(2,'0'));
+        $("#seconds").text(String(seconds).padStart(2,'0'));
+    },1000);
+}
+
+startRealTimer();
+
+// 💌 LETTER OPEN
 $("#envelope").on("click touchstart", function(){
     $(this).addClass("open");
     setTimeout(()=>{
@@ -321,8 +341,8 @@ $("#envelope").on("click touchstart", function(){
         });
     },700);
 });
+
 });
 </script>
-
 </body>
 </html>
