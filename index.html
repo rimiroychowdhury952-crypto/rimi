@@ -7,7 +7,6 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{
     font-family:'Poppins', sans-serif;
     height:100vh;
@@ -18,13 +17,16 @@ body{
     background:#000;
 }
 
+.emotional-message::-webkit-scrollbar{display:none;}
+.emotional-message{-ms-overflow-style:none;scrollbar-width:none;}
+
 .bg-image{
     position:fixed;
     width:100%;
     height:100%;
     background:
         linear-gradient(rgba(20,15,15,0.5), rgba(20,15,15,0.7)),
-        url('fog.jpg') center/cover no-repeat;
+        url('img/fog.jpg') center/cover no-repeat;
     filter: blur(2px);
     z-index:0;
 }
@@ -37,9 +39,19 @@ body{
     animation:fogMove 40s linear infinite;
     z-index:1;
 }
-@keyframes fogMove{
-    to{transform:translate(-25%,-25%);}
+@keyframes fogMove{to{transform:translate(-25%,-25%);}}
+
+.star{
+    position:fixed;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0.6;
+    animation: twinkle 3s infinite ease-in-out;
+    z-index:2;
 }
+@keyframes twinkle{50%{opacity:1; transform:scale(1.5);}}
 
 .leaf{
     position:fixed;
@@ -48,9 +60,7 @@ body{
     animation:fall linear forwards;
     z-index:4;
 }
-@keyframes fall{
-    100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
-}
+@keyframes fall{100%{transform:translateY(110vh) rotate(360deg);opacity:0;}}
 
 .firefly{
     position:fixed;
@@ -62,9 +72,7 @@ body{
     animation:fly 6s infinite ease-in-out;
     z-index:3;
 }
-@keyframes fly{
-    50%{opacity:1; transform:translate(50px,-80px);}
-}
+@keyframes fly{50%{opacity:1; transform:translate(50px,-80px);}}
 
 .timer-container{
     position:relative;
@@ -120,7 +128,9 @@ h1{
     background:#c9a27c;
     border-radius:5px;
     cursor:pointer;
+    transition: transform 0.3s ease;
 }
+.envelope:hover{transform: scale(1.05);}
 
 .flap{
     position:absolute;
@@ -143,17 +153,12 @@ h1{
     transition:0.6s;
 }
 
-.envelope.open .flap{
-    transform:rotateX(180deg);
-}
+.envelope.open .flap{transform:rotateX(180deg);}
+.envelope.open .letter{transform:translateY(-60px);}
 
-.envelope.open .letter{
-    transform:translateY(-60px);
-}
-
-/* MESSAGE */
 .emotional-message{
     display:none;
+    opacity:0;
     position:fixed;
     top:0;
     left:0;
@@ -169,39 +174,14 @@ h1{
     text-shadow:0 0 10px rgba(255,255,255,0.5),0 0 20px rgba(255,200,150,0.3);
     white-space:pre-line;
     padding:80px 20px;
-    transition: transform 2s ease-in-out;
+    transition: opacity 1.5s ease;
 }
 
-/* Floating effect for typing */
-.float{
-    animation: floatUpDown 6s ease-in-out infinite alternate;
-}
+.float{animation: floatUpDown 6s ease-in-out infinite alternate;}
+.slowFloat{animation: slowFloatUpDown 8s ease-in-out infinite alternate;}
 
-/* Gentle floating after typing ends */
-.slowFloat{
-    animation: slowFloatUpDown 8s ease-in-out infinite alternate;
-}
-
-@keyframes floatUpDown{
-    0%{transform: translateY(0);}
-    50%{transform: translateY(-20px);}
-    100%{transform: translateY(0);}
-}
-
-@keyframes slowFloatUpDown{
-    0%{transform: translateY(0);}
-    50%{transform: translateY(-10px);}
-    100%{transform: translateY(0);}
-}
-
-/* Scrollbar */
-.emotional-message::-webkit-scrollbar{
-    width:6px;
-}
-.emotional-message::-webkit-scrollbar-thumb{
-    background:#f5e6d3;
-    border-radius:10px;
-}
+@keyframes floatUpDown{50%{transform: translateY(-20px);} }
+@keyframes slowFloatUpDown{50%{transform: translateY(-10px);} }
 </style>
 </head>
 
@@ -210,7 +190,6 @@ h1{
 <div class="bg-image"></div>
 <div class="fog"></div>
 
-<!-- TIMER -->
 <div class="timer-container" id="timerContainer">
     <h1>Something special is waiting for you… ✨</h1>
     <div class="timer-row">
@@ -221,7 +200,6 @@ h1{
     </div>
 </div>
 
-<!-- LETTER -->
 <div class="letter-box" id="letterBox">
     <div class="envelope" id="envelope">
         <div class="flap"></div>
@@ -230,7 +208,6 @@ h1{
     <p style="color:white;margin-top:10px;">Tap to open</p>
 </div>
 
-<!-- MESSAGE -->
 <div class="emotional-message float" id="message"></div>
 
 <script>
@@ -275,14 +252,9 @@ function type(){
     if(i < text.length){
         el.innerHTML += text.charAt(i);
         i++;
-
-        if(el.scrollHeight > el.clientHeight){
-            el.scrollTop = el.scrollHeight;
-        }
-
-        setTimeout(type, 70); // slower typing
+        el.scrollTop = el.scrollHeight;
+        setTimeout(type, 70);
     } else {
-        // After typing, change floating to slowFloat
         el.classList.remove("float");
         el.classList.add("slowFloat");
     }
@@ -292,7 +264,16 @@ type();
 
 $(document).ready(function(){
 
-// Leaves
+for(let i=0;i<40;i++){
+    let star=$('<div class="star"></div>');
+    star.css({
+        left:Math.random()*100+"%",
+        top:Math.random()*100+"%",
+        animationDuration:(Math.random()*3+2)+"s"
+    });
+    $("body").append(star);
+}
+
 setInterval(()=>{
     let leaf=$('<div class="leaf">🍂</div>');
     leaf.css({left:Math.random()*100+"%",animationDuration:(Math.random()*5+5)+"s"});
@@ -300,14 +281,12 @@ setInterval(()=>{
     setTimeout(()=>leaf.remove(),8000);
 },800);
 
-// Fireflies
 for(let i=0;i<25;i++){
     let f=$('<div class="firefly"></div>');
-    f.css({left:Math.random()*100+"%",top:Math.random()*100+"%"});
+    f.css({left:Math.random()*100+"%",top:Math.random()*100+"%"}); 
     $("body").append(f);
 }
 
-// Timer
 let totalSeconds = 10;
 let c = setInterval(()=>{
     let days = Math.floor(totalSeconds / (24 * 3600));
@@ -331,19 +310,17 @@ let c = setInterval(()=>{
     totalSeconds--;
 },1000);
 
-// Open envelope
-$("#envelope").click(function(){
+$("#envelope").on("click touchstart", function(){
     $(this).addClass("open");
-
     setTimeout(()=>{
         $("#letterBox").fadeOut(800,()=>{
             $("#message").fadeIn(300,()=>{
+                document.getElementById("message").style.opacity = 1;
                 startTypingWithAutoScroll();
             });
         });
     },700);
 });
-
 });
 </script>
 
